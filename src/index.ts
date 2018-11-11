@@ -4,6 +4,7 @@ import { Composites, Composite, Constraint, IBodyDefinition, Engine, Render, Bod
 import { Scene } from './scene';
 import { PointsGenerator } from './points-generator'
 import { IMouseConstraintDefinition } from 'matter-js';
+import { MyRender } from './render';
 
 
 //NOTES
@@ -19,6 +20,8 @@ import { IMouseConstraintDefinition } from 'matter-js';
 // let app = new PIXI.Application({width: 500, height: 500});
 // //Add the canvas that Pixi automatically created for you to the HTML document
 // document.body.appendChild(app.view);
+console.log(PointsGenerator);
+Matter.Plugin.register(PointsGenerator as Matter.Plugin);
 
 
 // module aliases
@@ -27,15 +30,17 @@ import { IMouseConstraintDefinition } from 'matter-js';
 var engine = Engine.create();
 engine.world.gravity.scale = .0014;
 
+var render = new MyRender();
+render.create(engine)
 // create a renderer
-var render = Render.create({
-    element: document.body,
-    engine: engine,
-    options: {
-        width: 800,
-        height: 600
-    }
-});
+// var render = Render.create({
+//     element: document.body,
+//     engine: engine,
+//     options: {
+//         width: 800,
+//         height: 600
+//     }
+// });
 
 const CollisionCategories = {
     playerCategory: 0x0001,
@@ -53,7 +58,7 @@ var point1 = Bodies.circle(200, 200, 20,
     }
 );
 
-var point2 = Bodies.circle(400, 200, 20,
+var point2 = Bodies.circle(500, 400, 20,
     <IBodyDefinition>{
         isStatic: true,
         collisionFilter: {
@@ -93,12 +98,12 @@ World.add(engine.world, ropeB);
 })();
 
 // run the renderer
-Render.run(render);
+Render.run(render.render as Render);
 
 Scene.Init(engine);
 
 // Add mouse control
-const mouse = Mouse.create(render.canvas);
+const mouse = Mouse.create(render.render.canvas);
 const mouseConstraint = MouseConstraint.create(engine, <IMouseConstraintDefinition>{
     mouse: mouse,
     constraint: {
@@ -118,5 +123,8 @@ Events.on(mouseConstraint, 'startdrag', function (event) {
     ropeConstraint.pointA= {x:event.body.position.x, y: event.body.position.y};
 });
 
+
 World.add(engine.world, mouseConstraint);
+// PointsGenerator.options.width = render.options.width;
+Matter.use("points-generator");
 

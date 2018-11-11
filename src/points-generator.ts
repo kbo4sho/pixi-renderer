@@ -1,4 +1,5 @@
 import * as Matter from 'matter-js'
+import { MyRender } from './render';
 
 const CollisonCategories = {
     playerCategory: 0x0001,
@@ -11,6 +12,7 @@ export const PointsGenerator = {
     version: "0.1.3",
     for: "matter-js@^0.12.0",
     install: function (base: any) {
+        console.log(base);
         let previousTimestamp = 0;
         const World = base.World;
         const Body = base.Body;
@@ -22,7 +24,7 @@ export const PointsGenerator = {
             const currentTimestamp = event.timing.timestamp;
             const steppable = currentTimestamp - previousTimestamp > 1000;
             if (steppable) {
-                let body = Bodies.circle(0, 200, 15, {
+                let body = Bodies.circle(0, 300, 15, {
                     timeScale: 0.2,
                     density: 0.0000001,
                     collisionFilter: {
